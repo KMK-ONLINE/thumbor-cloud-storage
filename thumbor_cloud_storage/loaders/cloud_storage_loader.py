@@ -1,13 +1,24 @@
-import gcloud.storage
+from google.cloud import storage
+from thumbor.loaders import LoaderResult
+from tornado.concurrent import return_future
 
+
+@return_future
 def load(context, path, callback):
     bucket_id  = context.config.get("CLOUD_STORAGE_BUCKET_ID")
     project_id = context.config.get("CLOUD_STORAGE_PROJECT_ID")
 
-    bucket = gcloud.storage.get_bucket(bucket_id, project_id)
-    blob = bucket.get_blob(path)
+    client = storage.Client(project=project_id)
+    bucket = client.bucket(bucket_id)
+    blob = bucket.blob(path)
+
+    result = LoaderResult()
 
     if blob is None:
-      return callback(None)
+        result.error = LoaderResult.ERROR_NOT_FOUND
+        result.successful = False
+        return callback(result)
 
-    callback(blob.download_as_string())
+    result.buffer = blob.download_as_string()
+    result.successful = True
+    callback(result)
