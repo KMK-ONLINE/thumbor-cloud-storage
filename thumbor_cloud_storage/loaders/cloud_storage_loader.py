@@ -11,7 +11,7 @@ def load(context, path, callback):
     result = LoaderResult()
 
     bucket_id = _get_bucket(context, path)
-    if bucket_id == '' or None:
+    if bucket_id == '' or bucket_id is None:
         result.successful = False
         result.error = LoaderResult.ERROR_NOT_FOUND
         callback(result)
@@ -42,8 +42,11 @@ def load(context, path, callback):
 
 def _get_bucket(context, url):
     url = urllib2.unquote(url)
-    url_by_piece = url.lstrip('/').split('/')
 
+    if '/' not in url:
+        return None
+
+    url_by_piece = url.lstrip('/').split('/')
     return url_by_piece[0]
 
 
