@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import urllib2
 from google.cloud import storage
 from thumbor.loaders import LoaderResult
@@ -51,6 +53,7 @@ def _get_bucket(context, url):
 
 
 def _clean_path(path):
+    path = urllib2.unquote(path)
     path = path.decode('utf-8')
 
     while '//' in path:
