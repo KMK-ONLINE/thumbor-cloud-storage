@@ -4,6 +4,7 @@ from setuptools import find_packages
 REQUIREMENTS = [
   "thumbor",
   "google-cloud-storage",
+  "requests"
 ]
 
 setup(

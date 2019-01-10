@@ -4,6 +4,14 @@ import urllib2
 from google.cloud import storage
 from thumbor.loaders import LoaderResult
 from tornado.concurrent import return_future
+import requests
+from requests.adapters import TimeoutSauce
+
+class ThumborRetrievalTimeout(TimeoutSauce):
+    def __init__(self, *args, **kwargs):
+        super(MyTimeout, self).__init__(connect=31, read=31)
+
+requests.adapters.TimeoutSauce = ThumborRetrievalTimeout
 
 
 @return_future
