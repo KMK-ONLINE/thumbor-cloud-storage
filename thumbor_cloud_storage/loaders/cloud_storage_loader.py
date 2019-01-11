@@ -4,18 +4,13 @@ import urllib2
 from google.cloud import storage
 from thumbor.loaders import LoaderResult
 from tornado.concurrent import return_future
-import requests
-from requests.adapters import TimeoutSauce
-
-class ThumborRetrievalTimeout(TimeoutSauce):
-    def __init__(self, *args, **kwargs):
-        super(MyTimeout, self).__init__(connect=31, read=31)
-
-requests.adapters.TimeoutSauce = ThumborRetrievalTimeout
+import time
+import timeout_decorator
 
 
 @return_future
 def load(context, path, callback):
+    print('start request')
     project_id = context.config.get("CLOUD_STORAGE_PROJECT_ID")
 
     result = LoaderResult()
@@ -37,7 +32,7 @@ def load(context, path, callback):
     blob = bucket.blob(file_path)
 
     try:
-        result.buffer = blob.download_as_string()
+        result.buffer = download(blob)
         result.successful = True
     except Exception, e:
         if '404' in str(e):
@@ -48,6 +43,11 @@ def load(context, path, callback):
             result.error = LoaderResult.ERROR_UPSTREAM
 
     callback(result)
+
+
+@timeout_decorator.timeout(31)
+def download(blob):
+    return blob.download_as_string()
 
 
 def _get_bucket(url):
