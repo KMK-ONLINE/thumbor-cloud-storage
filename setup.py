@@ -4,7 +4,13 @@ from setuptools import find_packages
 REQUIREMENTS = [
   "thumbor",
   "google-cloud-storage",
-  "timeout_decorator"
+  "timeout_decorator",
+  "tc_aws" #https://github.com/KMK-ONLINE/aws/archive/master.zip
+]
+
+TEST_REQUIREMENTS = [
+  "mock",
+  "preggy"
 ]
 
 setup(
@@ -18,5 +24,6 @@ setup(
   include_package_data=True,
   packages=find_packages(),
   install_requires=REQUIREMENTS,
+  tests_require=TEST_REQUIREMENTS,
   zip_safe=False
 )
