@@ -24,8 +24,7 @@ def dummy_gcs_load(context, url, callback):
     callback(result)
 
 def dummy_s3_load(context, url, callback):
-    result.buffer = 's3'
-    callback(result)
+    callback("")
 
 def dummy_s3_load_failed(context, url, callback):
     result = LoaderResult()
@@ -46,8 +45,7 @@ class GCSLoaderS3FallbackTestCase(TestCase):
 
         result = loader.load(self.ctx, path, lambda x: x).result()
 
-        expect(result).to_be_instance_of(LoaderResult)
-        expect(result.buffer).to_equal('s3')
+        expect(result).to_be_instance_of(str)
 
     @patch.object(tc_aws.loaders.s3_loader, 'load', dummy_s3_load_failed)
     @patch.object(thumbor_cloud_storage.loaders.cloud_storage_loader, 'load', dummy_gcs_load)
