@@ -1,17 +1,24 @@
 # coding: utf-8
 
+import os
 import urllib2
+
+import timeout_decorator
 from google.cloud import storage
 from thumbor.loaders import LoaderResult
 from tornado.concurrent import return_future
-import time
-import timeout_decorator
 
 
 @return_future
 def load(context, path, callback):
     print('start request')
-    project_id = context.config.get("CLOUD_STORAGE_PROJECT_ID")
+    try:
+        project_id = context.config.get("CLOUD_STORAGE_PROJECT_ID")
+    except KeyError:
+        project_id = os.environ['GOOGLE_CLOUD_PROJECT']
+    if not project_id:
+        project_id = os.environ['GOOGLE_CLOUD_PROJECT']
+    print("Request asset to project: {}".format(project_id))
 
     result = LoaderResult()
 
