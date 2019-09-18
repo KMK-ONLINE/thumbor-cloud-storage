@@ -9,14 +9,10 @@ from thumbor.loaders import LoaderResult
 from tornado.concurrent import return_future
 
 
+client = storage.Client()
+
 @return_future
 def load(context, path, callback):
-    try:
-        project_id = context.config.get("CLOUD_STORAGE_PROJECT_ID")
-    except KeyError:
-        project_id = os.environ['GOOGLE_CLOUD_PROJECT']
-    if not project_id:
-        project_id = os.environ['GOOGLE_CLOUD_PROJECT']
 
     result = LoaderResult()
 
@@ -32,7 +28,6 @@ def load(context, path, callback):
     path = _clean_path(path)
     file_path = path[prefix:]
 
-    client = storage.Client(project=project_id)
     bucket = client.bucket(bucket_id)
     blob = bucket.blob(file_path)
 
